@@ -36,4 +36,3 @@ jobs:
           echo $DEVKITARM
           echo $CTRULIB
           make -f picodrive-make
-		  
