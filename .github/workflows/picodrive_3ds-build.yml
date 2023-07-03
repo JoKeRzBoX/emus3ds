@@ -34,11 +34,21 @@ jobs:
           ls -la
           cd ..
           pwd
+      - name: build libctru-1.0.0 from source
+        run: |
+          DEVKITPRO=opt/devkitpro
+          DEVKITARM=opt/devkitpro/devkitARM
+          export DEVKITPRO DEVKITARM
+          echo $DEVKITARM
+          echo $CTRULIB
+          cd opt/devkitpro/libctru-1.0.0/libctru
+          make
+          cd ../../../..
       - name: build picodrive_3ds
         run: |
           DEVKITPRO=opt/devkitpro
           DEVKITARM=opt/devkitpro/devkitARM
-          CTRULIB="opt/devkitpro/libctru-1.0.0 opt/devkitpro/citro3d-1.0.0"
+          CTRULIB="opt/devkitpro/libctru-1.0.0/libctru opt/devkitpro/citro3d-1.0.0"
           export DEVKITPRO DEVKITARM CTRULIB
           echo $DEVKITARM
           echo $CTRULIB
