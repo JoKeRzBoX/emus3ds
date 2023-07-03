@@ -1,6 +1,10 @@
 name: Picodrive 3DS Build
 
-on: workflow_dispatch
+#on: workflow_dispatch
+on:
+  push:
+    tags:
+      - '*'
 
 jobs:
   build:
@@ -58,7 +62,7 @@ jobs:
           echo $CTRULIB
           make -f picodrive-make
       - name: release
-        uses: actions/create-release@v1
+        uses: actions/create-release@v2
         id: create_release
         with:
           draft: true
