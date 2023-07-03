@@ -16,62 +16,63 @@ jobs:
         with:
           submodules: "recursive"
           fetch-depth: 0
-
       - name: Set up pre-reqs
         run: |
-          sudo apt-get install make --version
-      - name: install devkitARM and libs
-        run: |
-          mkdir -p opt/devkitpro
-          cd opt/devkitpro
-          pwd
-          curl "https://wii.leseratte10.de/devkitPro/devkitARM/r45%20%282015%29/devkitARM_r45-x86_64-linux.tar.bz2" --output - |tar xvj
-          curl "https://wii.leseratte10.de/devkitPro/libctru/2015/libctru-1.0.0.tar.gz" --output - |tar xvz
-          mkdir citro3d-1.0.0
-          cd citro3d-1.0.0
-          curl "https://wii.leseratte10.de/devkitPro/other-stuff/citro3d/citro3d-1.0.0.tar.bz2" --output - |tar xvj
-          cd ..
-          ls -la
-          cd ..
-          pwd
-      - name: build libctru-1.0.0 from source
-        run: |
-          DEVKITPRO=$PWD/opt/devkitpro
-          DEVKITARM=$PWD/opt/devkitpro/devkitARM
-          export DEVKITPRO DEVKITARM
-          echo $DEVKITARM
-          echo $CTRULIB
-          cd opt/devkitpro/libctru-1.0.0/libctru
-          make
-          cd ../../../..
+          make --version
       - name: version
-        run: echo "::set-output name=version::$(./bin/azblogfilter --version)"
+        run: echo "::set-output name=version::$(grep 'impl3dsTitleText =' src/cores/picodrive/3ds/3dsimpl.cpp |awk '{print $(NF)}' |sed 's:\".*::')"
         id: version
-      - name: build picodrive_3ds
-        run: |
-          DEVKITPRO=$PWD/opt/devkitpro
-          DEVKITARM=$PWD/opt/devkitpro/devkitARM
-          CTRULIB="$PWD/opt/devkitpro/libctru-1.0.0/libctru $PWD/opt/devkitpro/citro3d-1.0.0"
-          export DEVKITPRO DEVKITARM CTRULIB
-          echo $DEVKITARM
-          echo $CTRULIB
-          make -f picodrive-make
-      - name: release
-        uses: actions/create-release@v1
-        id: create_release
-        with:
-          draft: true
-          prerelease: false
-          release_name: ${{ steps.version.outputs.version }}
-          tag_name: ${{ github.ref }}
-          body_path: readme-picdrive.md
-      - name: create artifact package for release
-        run: |
-          zip picodrive_3ds-${{ steps.version.outputs.version }}.zip readme-picdrive.md picodrive_3ds*
-      - name: upload artifact to release
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./picodrive_3ds-${{ steps.version.outputs.version }}.zip
-          asset_name: picodrive_3ds-${{ steps.version.outputs.version }}.zip
-          asset_content_type: application/zip
+      - name: test version
+        run: echo "This is the version " ${{ steps.version.outputs.version }}
+#      - name: install devkitARM and libs
+#        run: |
+#          mkdir -p opt/devkitpro
+#          cd opt/devkitpro
+#          pwd
+#          curl "https://wii.leseratte10.de/devkitPro/devkitARM/r45%20%282015%29/devkitARM_r45-x86_64-linux.tar.bz2" --output - |tar xvj
+#          curl "https://wii.leseratte10.de/devkitPro/libctru/2015/libctru-1.0.0.tar.gz" --output - |tar xvz
+#          mkdir citro3d-1.0.0
+#          cd citro3d-1.0.0
+#          curl "https://wii.leseratte10.de/devkitPro/other-stuff/citro3d/citro3d-1.0.0.tar.bz2" --output - |tar xvj
+#          cd ..
+#          ls -la
+#          cd ..
+#          pwd
+#      - name: build libctru-1.0.0 from source
+#        run: |
+#          DEVKITPRO=$PWD/opt/devkitpro
+#          DEVKITARM=$PWD/opt/devkitpro/devkitARM
+#          export DEVKITPRO DEVKITARM
+#          echo $DEVKITARM
+#          echo $CTRULIB
+#          cd opt/devkitpro/libctru-1.0.0/libctru
+#          make
+#          cd ../../../..
+#      - name: build picodrive_3ds
+#        run: |
+#          DEVKITPRO=$PWD/opt/devkitpro
+#          DEVKITARM=$PWD/opt/devkitpro/devkitARM
+#          CTRULIB="$PWD/opt/devkitpro/libctru-1.0.0/libctru $PWD/opt/devkitpro/citro3d-1.0.0"
+#          export DEVKITPRO DEVKITARM CTRULIB
+#          echo $DEVKITARM
+#          echo $CTRULIB
+#          make -f picodrive-make
+#      - name: release
+#        uses: actions/create-release@v1
+#        id: create_release
+#        with:
+#          draft: true
+#          prerelease: false
+#          release_name: ${{ steps.version.outputs.version }}
+#          tag_name: ${{ github.ref }}
+#          body_path: readme-picdrive.md
+#      - name: create artifact package for release
+#        run: |
+#          zip picodrive_3ds-${{ steps.version.outputs.version }}.zip readme-picdrive.md picodrive_3ds*
+#      - name: upload artifact to release
+#        uses: actions/upload-release-asset@v1
+#        with:
+#          upload_url: ${{ steps.create_release.outputs.upload_url }}
+#          asset_path: ./picodrive_3ds-${{ steps.version.outputs.version }}.zip
+#          asset_name: picodrive_3ds-${{ steps.version.outputs.version }}.zip
+#          asset_content_type: application/zip
