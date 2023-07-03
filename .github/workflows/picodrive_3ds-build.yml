@@ -20,10 +20,11 @@ jobs:
         run: |
           make --version
       - name: version
-        run: echo "::set-output name=version::$(grep 'impl3dsTitleText =' src/cores/picodrive/3ds/3dsimpl.cpp |awk '{print $(NF)}' |sed 's:\".*::')"
+        #run: echo "::set-output name=version::$(grep 'impl3dsTitleText =' src/cores/picodrive/3ds/3dsimpl.cpp |awk '{print $(NF)}' |sed 's:\".*::')"
+        run: echo "version=$(grep 'impl3dsTitleText =' src/cores/picodrive/3ds/3dsimpl.cpp |awk '{print $(NF)}" >> $GITHUB_OUTPUT
         id: version
       - name: test version
-        run: echo "This is the version " ${{ steps.version.outputs.version }}
+        run: echo This is the version ${{ env.version }}
 #      - name: install devkitARM and libs
 #        run: |
 #          mkdir -p opt/devkitpro
