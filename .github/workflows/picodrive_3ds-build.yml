@@ -65,7 +65,7 @@ jobs:
           prerelease: false
           release_name: ${{ steps.version.outputs.version }}
           tag_name: ${{ github.ref }}
-          body_path: readme-picdrive.md
+          body_path: readme-picodrive.md
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: create artifact package for release
