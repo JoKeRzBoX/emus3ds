@@ -1,3 +1,7 @@
 name: Picodrive 3DS Build
 
-on: workflow_dispatch
+#on: workflow_dispatch
+on:
+  push:
+    tags:
+      - '*'
