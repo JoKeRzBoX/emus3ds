@@ -44,6 +44,9 @@ jobs:
           cd opt/devkitpro/libctru-1.0.0/libctru
           make
           cd ../../../..
+      - name: version
+        run: echo "::set-output name=version::$(./bin/azblogfilter --version)"
+        id: version
       - name: build picodrive_3ds
         run: |
           DEVKITPRO=$PWD/opt/devkitpro
@@ -53,3 +56,22 @@ jobs:
           echo $DEVKITARM
           echo $CTRULIB
           make -f picodrive-make
+      - name: release
+        uses: actions/create-release@v1
+        id: create_release
+        with:
+          draft: true
+          prerelease: false
+          release_name: ${{ steps.version.outputs.version }}
+          tag_name: ${{ github.ref }}
+          body_path: readme-picdrive.md
+      - name: create artifact package for release
+        run: |
+          zip picodrive_3ds-${{ steps.version.outputs.version }}.zip readme-picdrive.md picodrive_3ds*
+      - name: upload artifact to release
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./picodrive_3ds-${{ steps.version.outputs.version }}.zip
+          asset_name: picodrive_3ds-${{ steps.version.outputs.version }}.zip
+          asset_content_type: application/zip
