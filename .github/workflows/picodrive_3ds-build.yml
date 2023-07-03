@@ -1,0 +1,3 @@
+name: Picodrive 3DS Build
+
+on: workflow_dispatch
